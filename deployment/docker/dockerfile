@@ -1,0 +1,15 @@
+FROM python:3.8-alpine
+
+WORKDIR /home/app
+
+RUN apk add build-base jpeg-dev zlib-dev postgresql-dev postgresql-client gettext musl libffi-dev
+
+COPY requirements/* ./
+
+RUN pip3 install --no-cache-dir -r production.txt
+
+COPY . .
+
+CMD ["make", "startDjango" ]
+
+EXPOSE 8000

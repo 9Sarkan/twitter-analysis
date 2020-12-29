@@ -1,0 +1,87 @@
+version: "3.7"
+services:
+  db:
+    image: "postgres:12-alpine"
+    networks:
+      - sample-project
+    volumes:
+      - "sample-project_postgres:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres-passwd
+      - POSTGRES_USER_FILE=/run/secrets/postgres-user
+      - POSTGRES_DB_FILE=/run/secrets/postgres-db
+    secrets:
+      - postgres-db
+      - postgres-user
+      - postgres-passwd
+    # env_file: .env # you can use this in development
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+
+  web-server:
+    image: "nginx:alpine"
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - sample-project
+    volumes:
+      - "../nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "../nginx/ssl:/etc/nginx/custome-ssl"
+      - "../static:/static"
+      - "sample-project_media:/media"
+    depends_on:
+      - sample-project
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  sample-project:
+    image: "sample-project:latest"
+    env_file: ../../source/.env
+    volumes:
+      - "sample-project_media:/home/app/media"
+      - "../../static:/home/app/static"
+      - "../../source/base/settings.py:/home/app/source/base/settings.py"
+    secrets:
+      - postgres-db
+      - postgres-user
+      - postgres-passwd
+      - secret-key
+    networks:
+      - sample-project
+    depends_on:
+      - db
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 20s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+networks:
+  sample-project:
+    # driver: overlay
+
+volumes:
+  sample-project_postgres:
+    external: true
+  sample-project_media:
+    external: true
+
+secrets:
+  postgres-passwd:
+    external: true
+  postgres-user:
+    external: true
+  postgres-db:
+    external: true
+  secret-key:
+    external: true
