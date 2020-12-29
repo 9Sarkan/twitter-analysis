@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     "drf_yasg",
 
     # Locals
-
+    'apps.sample-app'
 ]
 
 MIDDLEWARE = [
