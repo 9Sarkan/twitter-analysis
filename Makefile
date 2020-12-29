@@ -4,7 +4,7 @@ startDjango:
 ifeq ("$(DEBUG_MODE)","True")
 	python source/manage.py runserver 0.0.0.0:8000
 else
-	gunicorn source.wsgi -b 0.0.0.0:8000 --log-level=debug --log-file=-
+	cd source && gunicorn source.wsgi -b 0.0.0.0:8000 --log-level=debug --log-file=-
 endif
 
 settings:
@@ -24,13 +24,13 @@ rollingUpdate:
 	docker service update --force --image sample-project:latest sample-project-stack_sample-project
 
 env:
-	cp ./deployment/.env.sample source/.env
+	cp deployment/.env.sample source/.env
 
 nginxConf:
-	cp ./deployment/nginx/nginx.sample.conf ./deployment/nginx/nginx.conf
+	cp deployment/nginx/nginx.sample.conf deployment/nginx/nginx.conf
 
 superUser:
-	docker exec -it sample-project-stack_sample-project.1.* ./manage.py createsuperuser
+	docker exec -it sample-project-stack_sample-project ./manage.py createsuperuser
 
 intoPsql:
 	docker exec -it sample-project-stack_sample-project ./manage.py dbshell
@@ -45,11 +45,11 @@ restartNginx:
 	docker service update --force sample-project-stack_web-server
 
 secrets:
-	@read -p "Enter Postgres DB Name:" postgres_db; \
-	read -p "Enter Postgres User Name:" postgres_user; \
-	read -p "Enter Postgres User Password:" postgres_passwd; \
-	read -p "Enter Django Secret Key:" secret_key; \
-	echo $$postgres_db | docker secret create postgres-db -;\
-	echo $$postgres_user | docker secret create postgres-user -;\
-	echo $$postgres_passwd | docker secret create postgres-passwd -;\
-	echo $$secret_key | docker secret create secret-key -
+	@read -p "Enter Postgres DB Name:" sample-project_postgres_db; \
+	read -p "Enter Postgres User Name:" sample-project_postgres_user; \
+	read -p "Enter Postgres User Password:" sample-project_postgres_passwd; \
+	read -p "Enter Django Secret Key:" sample-project_secret_key; \
+	echo $$sample-project_postgres_db | docker secret create sample-project-postgres-db -;\
+	echo $$sample-project_postgres_user | docker secret create sample-project-postgres-user -;\
+	echo $$sample-project_postgres_passwd | docker secret create sample-project-postgres-passwd -;\
+	echo $$sample-project_secret_key | docker secret create sample-project-secret-key -
