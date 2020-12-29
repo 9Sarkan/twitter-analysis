@@ -7,13 +7,13 @@ services:
     volumes:
       - "sample-project_postgres:/var/lib/postgresql/data"
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres-passwd
-      - POSTGRES_USER_FILE=/run/secrets/postgres-user
-      - POSTGRES_DB_FILE=/run/secrets/postgres-db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/sample-project-postgres-passwd
+      - POSTGRES_USER_FILE=/run/secrets/sample-project-postgres-user
+      - POSTGRES_DB_FILE=/run/secrets/sample-project-postgres-db
     secrets:
-      - postgres-db
-      - postgres-user
-      - postgres-passwd
+      - sample-project-postgres-db
+      - sample-project-postgres-user
+      - sample-project-postgres-passwd
     # env_file: .env # you can use this in development
     deploy:
       restart_policy:
@@ -48,10 +48,10 @@ services:
       - "../../static:/home/app/static"
       - "../../source/base/settings.py:/home/app/source/base/settings.py"
     secrets:
-      - postgres-db
-      - postgres-user
-      - postgres-passwd
-      - secret-key
+      - sample-project-postgres-db
+      - sample-project-postgres-user
+      - sample-project-postgres-passwd
+      - sample-project-secret-key
     networks:
       - sample-project
     depends_on:
@@ -77,11 +77,11 @@ volumes:
     external: true
 
 secrets:
-  postgres-passwd:
+  sample-project-postgres-passwd:
     external: true
-  postgres-user:
+  sample-project-postgres-user:
     external: true
-  postgres-db:
+  sample-project-postgres-db:
     external: true
-  secret-key:
+  sample-project-secret-key:
     external: true
