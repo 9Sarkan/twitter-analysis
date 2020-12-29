@@ -12,7 +12,7 @@ PROJECT_DESCRIPTION = get_env("PROJECT_DESCRIPTION", raise_exception=True)
 PROJECT_DOMAIN_NAME = get_env("PROJECT_DOMAIN_NAME", raise_exception=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_env("SECRET_KEY", raise_exception=True)
+SECRET_KEY = get_docker_secret("opendental-secret-key","_")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(get_env("DEBUG", raise_exception=True))
@@ -29,9 +29,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     # Third Parties
+    "rest_framework",
     "corsheaders",
+    "drf_yasg",
+
     # Locals
+
 ]
 
 MIDDLEWARE = [
@@ -45,12 +50,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "base.urls"
+# CORS Settings
 CORS_ORIGIN_ALLOW_ALL = True
-# Media files
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
+ROOT_URLCONF = "base.urls"
 
 TEMPLATES = [
     {
@@ -76,11 +79,11 @@ WSGI_APPLICATION = "base.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": get_env("DB_NAME", raise_exception=True),
-        "USER": get_env("DB_USER", raise_exception=True),
-        "PASSWORD": get_env("DB_PASSWORD", raise_exception=True),
-        "HOST": get_env("DB_HOST", raise_exception=True),
-        "PORT": get_env("DB_PORT", raise_exception=True),
+        'NAME': get_docker_secret('sample-project-postgres-db', 'sample-project'),
+        'USER': get_docker_secret('sample-project-postgres-user', 'sample-project_user'),
+        'PASSWORD': get_docker_secret('sample-project-postgres-passwd', '1234'),
+        "HOST": get_env("POSTGRES_HOST", raise_exception=True),
+        "PORT": get_env("POSTGRES_PORT", raise_exception=True),
     }
 }
 
@@ -116,10 +119,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
+
+
+# Media files
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
 
 
 # Datetime format settings
@@ -160,3 +166,14 @@ LOGGING = {
     },
 }
 
+# Restframework
+REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%A, %b %d %Y %I:%M:%S %p %Z%z",
+    "DATE_FORMAT": "%A, %b %d %Y",
+    "TIME_FORMAT": "%I:%M:%S %p %Z%z",
+    "DEFAULT_VERSION": "v1.0",
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
+}
