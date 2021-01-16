@@ -1,5 +1,6 @@
 import os
 from commons.utils import get_env
+from .get_docker_secret import get_docker_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,7 +13,7 @@ PROJECT_DESCRIPTION = get_env("PROJECT_DESCRIPTION", raise_exception=True)
 PROJECT_DOMAIN_NAME = get_env("PROJECT_DOMAIN_NAME", raise_exception=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_docker_secret("opendental-secret-key","_")
+SECRET_KEY = get_docker_secret("sampleproject-secret-key","_")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(get_env("DEBUG", raise_exception=True))
@@ -144,6 +145,18 @@ SITE = {
     "DOMAIN": get_env("SITE_DOMAIN", "http://localhost:8000"),
 }
 
+# Restframework
+REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%A, %b %d %Y %I:%M:%S %p %Z%z",
+    "DATE_FORMAT": "%A, %b %d %Y",
+    "TIME_FORMAT": "%I:%M:%S %p %Z%z",
+    "DEFAULT_VERSION": "v1.0",
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
+}
+
 # Django Logger
 LOGGING = {
     "version": 1,
@@ -166,14 +179,11 @@ LOGGING = {
     },
 }
 
-# Restframework
-REST_FRAMEWORK = {
-    "DATETIME_FORMAT": "%A, %b %d %Y %I:%M:%S %p %Z%z",
-    "DATE_FORMAT": "%A, %b %d %Y",
-    "TIME_FORMAT": "%I:%M:%S %p %Z%z",
-    "DEFAULT_VERSION": "v1.0",
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 20,
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
-}
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+FROM_EMAIL = get_env("FROM_EMAIL", raise_exception=True)
+EMAIL_HOST = get_env("EMAIL_HOST", raise_exception=True)
+EMAIL_PORT = get_env("EMAIL_PORT", raise_exception=True)
+EMAIL_HOST_USER = get_env("EMAIL_HOST_USER", raise_exception=True)
+EMAIL_HOST_PASSWORD = get_env("EMAIL_HOST_PASSWORD", raise_exception=True)
+EMAIL_USE_TLS = True
