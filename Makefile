@@ -8,7 +8,7 @@ else
 endif
 
 settings:
-	cp source/base/settings.sample.py source/base/settings.py
+	cp source/base/settings.py.sample source/base/settings.py
 
 dockerImage:
 	docker build -f deployment/docker/dockerfile -t sample-project:latest .
@@ -27,7 +27,7 @@ env:
 	cp deployment/.env.sample source/.env
 
 nginxConf:
-	cp deployment/nginx/nginx.sample.conf deployment/nginx/nginx.conf
+	cp deployment/nginx/nginx.conf.sample deployment/nginx/nginx.conf
 
 superUser:
 	docker exec -it sample-project-stack_sample-project ./manage.py createsuperuser
