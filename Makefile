@@ -4,7 +4,7 @@ startDjango:
 ifeq ("$(DEBUG_MODE)","True")
 	python source/manage.py runserver 0.0.0.0:8000
 else
-	cd source && gunicorn source.wsgi -b 0.0.0.0:8000 --log-level=debug --log-file=-
+	cd source && gunicorn base.wsgi -b 0.0.0.0:8000 --log-level=debug --log-file=-
 endif
 
 settings:
