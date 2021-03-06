@@ -75,6 +75,8 @@ volumes:
     external: true
   sample-project_media:
     external: true
+  sample-project_static:
+    external: true
 
 secrets:
   sample-project-postgres-passwd:
