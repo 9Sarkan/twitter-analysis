@@ -39,8 +39,7 @@ http{
     }
 
     server {
-        listen 80;
-        # server_name sample-project.com;
+        server_name sample-project.com;
         proxy_pass_header Server;
 
         # listen 443 ssl;
