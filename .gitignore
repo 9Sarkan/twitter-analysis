@@ -8,6 +8,7 @@ settings.py
 source/*.sqlite
 source/*.json
 source/.env
+static
 # Distribution / packaging
 .Python
 .idea
