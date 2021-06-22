@@ -3,17 +3,17 @@ services:
   db:
     image: "postgres:12-alpine"
     networks:
-      - sample-project
+      - twitter-analyser
     volumes:
-      - "sample-project_postgres:/var/lib/postgresql/data"
+      - "twitter-analyser_postgres:/var/lib/postgresql/data"
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/sample-project-postgres-passwd
-      - POSTGRES_USER_FILE=/run/secrets/sample-project-postgres-user
-      - POSTGRES_DB_FILE=/run/secrets/sample-project-postgres-db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/twitter-analyser-postgres-passwd
+      - POSTGRES_USER_FILE=/run/secrets/twitter-analyser-postgres-user
+      - POSTGRES_DB_FILE=/run/secrets/twitter-analyser-postgres-db
     secrets:
-      - sample-project-postgres-db
-      - sample-project-postgres-user
-      - sample-project-postgres-passwd
+      - twitter-analyser-postgres-db
+      - twitter-analyser-postgres-user
+      - twitter-analyser-postgres-passwd
     # env_file: .env # you can use this in development
     deploy:
       restart_policy:
@@ -27,33 +27,33 @@ services:
       - 80:80
       - 443:443
     networks:
-      - sample-project
+      - twitter-analyser
     volumes:
       - "../nginx/nginx.conf:/etc/nginx/nginx.conf"
       - "../nginx/ssl:/etc/nginx/custome-ssl"
-      - "sample-project_static:/static"
-      - "sample-project_media:/media"
+      - "twitter-analyser_static:/static"
+      - "twitter-analyser_media:/media"
     depends_on:
-      - sample-project
+      - twitter-analyser
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 5
 
-  sample-project:
-    image: "sample-project:latest"
+  twitter-analyser:
+    image: "twitter-analyser:latest"
     env_file: ../../source/.env
     volumes:
-      - "sample-project_media:/home/app/source/media"
-      - "sample-project_static:/home/app/source/static"
+      - "twitter-analyser_media:/home/app/source/media"
+      - "twitter-analyser_static:/home/app/source/static"
       - "../../source/base/settings.py:/home/app/source/base/settings.py"
     secrets:
-      - sample-project-postgres-db
-      - sample-project-postgres-user
-      - sample-project-postgres-passwd
-      - sample-project-secret-key
+      - twitter-analyser-postgres-db
+      - twitter-analyser-postgres-user
+      - twitter-analyser-postgres-passwd
+      - twitter-analyser-secret-key
     networks:
-      - sample-project
+      - twitter-analyser
     depends_on:
       - db
     deploy:
@@ -67,23 +67,23 @@ services:
         max_attempts: 5
 
 networks:
-  sample-project:
+  twitter-analyser:
     # driver: overlay
 
 volumes:
-  sample-project_postgres:
+  twitter-analyser_postgres:
     external: true
-  sample-project_media:
+  twitter-analyser_media:
     external: true
-  sample-project_static:
+  twitter-analyser_static:
     external: true
 
 secrets:
-  sample-project-postgres-passwd:
+  twitter-analyser-postgres-passwd:
     external: true
-  sample-project-postgres-user:
+  twitter-analyser-postgres-user:
     external: true
-  sample-project-postgres-db:
+  twitter-analyser-postgres-db:
     external: true
-  sample-project-secret-key:
+  twitter-analyser-secret-key:
     external: true

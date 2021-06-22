@@ -29,17 +29,17 @@ http{
     keepalive_requests 100000;
 
     server {
-     if ($host = sample-project.com) {
+     if ($host = twitter-analyser.com) {
          return 301 https://$host$request_uri;
      }
      listen 80;
      listen [::]:80;
-     server_name sample-project.com;
+     server_name twitter-analyser.com;
      return 404;
     }
 
     server {
-        server_name sample-project.com;
+        server_name twitter-analyser.com;
         proxy_pass_header Server;
 
         # listen 443 ssl;
@@ -49,7 +49,7 @@ http{
         location / {
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
-            proxy_pass http://sample-project:8000/;
+            proxy_pass http://twitter-analyser:8000/;
         }
 
         location /static/ {

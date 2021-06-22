@@ -1,3 +1,2 @@
-# Cnili Django Code Style
+# Twitter Analyser
 
-Django code style (full template) for all back-end projects

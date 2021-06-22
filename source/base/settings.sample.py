@@ -80,9 +80,9 @@ WSGI_APPLICATION = "base.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        'NAME': get_docker_secret('sample-project-postgres-db', 'sample-project'),
-        'USER': get_docker_secret('sample-project-postgres-user', 'sample-project_user'),
-        'PASSWORD': get_docker_secret('sample-project-postgres-passwd', '1234'),
+        'NAME': get_docker_secret('twitter-analyser-postgres-db', 'twitter-analyser'),
+        'USER': get_docker_secret('twitter-analyser-postgres-user', 'twitter-analyser_user'),
+        'PASSWORD': get_docker_secret('twitter-analyser-postgres-passwd', '1234'),
         "HOST": get_env("POSTGRES_HOST", raise_exception=True),
         "PORT": get_env("POSTGRES_PORT", raise_exception=True),
     }
