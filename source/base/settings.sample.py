@@ -13,7 +13,7 @@ PROJECT_DESCRIPTION = get_env("PROJECT_DESCRIPTION", raise_exception=True)
 PROJECT_DOMAIN_NAME = get_env("PROJECT_DOMAIN_NAME", raise_exception=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_docker_secret("sampleproject_secret_key","_")
+SECRET_KEY = get_docker_secret("sampleproject_secret_key", "_")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(get_env("DEBUG", raise_exception=True))
@@ -180,11 +180,10 @@ LOGGING = {
 }
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-FROM_EMAIL = get_env("FROM_EMAIL", raise_exception=True)
-EMAIL_HOST = get_env("EMAIL_HOST", raise_exception=True)
-EMAIL_PORT = get_env("EMAIL_PORT", raise_exception=True)
-EMAIL_HOST_USER = get_env("EMAIL_HOST_USER", raise_exception=True)
-EMAIL_HOST_PASSWORD = get_env("EMAIL_HOST_PASSWORD", raise_exception=True)
-EMAIL_USE_TLS = True
-
+# TWITTER
+TWITTER_API_KEY = get_env("TWITTER_API_KEY", raise_exception=True)
+TWITTER_API_SECRET_KEY = get_env(
+    "TWITTER_API_SECRET_KEY", raise_exception=True)
+TWITTER_ACCESS_TOKEN = get_env("TWITTER_ACCESS_TOKEN", raise_exception=True)
+TWITTER_ACCESS_TOKEN_SECRET = get_env(
+    "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True)

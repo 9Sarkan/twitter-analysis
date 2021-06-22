@@ -18,7 +18,8 @@ class Helper(object):
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance == None:
-            cls.__instance = super(Helper, cls).__new__(Helper, *args, **kwargs)
+            cls.__instance = super(Helper, cls).__new__(
+                Helper, *args, **kwargs)
         return cls.__instance
 
     def remove_url(self, text):
@@ -50,7 +51,8 @@ class Helper(object):
         return stop_words
 
     def remove_stop_words(self, words_in_tweet, stop_words):
-        tweets_nsw = [word for word in words_in_tweet if not word in stop_words]
+        tweets_nsw = [
+            word for word in words_in_tweet if not word in stop_words]
         return tweets_nsw
 
     def remove_collection_words(self, words_in_tweet, collection_words):

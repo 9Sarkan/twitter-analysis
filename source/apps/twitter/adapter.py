@@ -1,18 +1,19 @@
 import os
+import time
 
 import nltk
 import tweepy
-from helpers.utils import Helper
-from interfaces.redis import Client as RedisClient
-import time
+from base.interfaces.redis import Client as RedisClient
+from commons.helpers.utils import Helper
+from django.conf import settings
 
 
-class Twitter(object):
+class TwitterAdapter(object):
     def __init__(self):
-        self._api_key = os.getenv("TWITTER_API_KEY")
-        self._api_key_secret = os.getenv("TWITTER_API_SECRET_KEY")
-        self._access_token = os.getenv("TWITTER_ACCESS_TOKEN")
-        self._access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+        self._api_key = settings.TWITTER_API_KEY
+        self._api_key_secret = settings.TWITTER_API_SECRET_KEY
+        self._access_token = settings.TWITTER_ACCESS_TOKEN
+        self._access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET
         self._auth = tweepy.OAuthHandler(self._api_key, self._api_key_secret)
         self.api = tweepy.API(self._auth, wait_on_rate_limit=True)
 
