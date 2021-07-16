@@ -9,6 +9,16 @@ from django.conf import settings
 
 
 class TwitterAdapter(object):
+
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(TwitterAdapter, cls).__new__(
+                TwitterAdapter, *args, **kwargs
+            )
+        return cls._instance
+
     def __init__(self):
         self._api_key = settings.TWITTER_API_KEY
         self._api_key_secret = settings.TWITTER_API_SECRET_KEY
