@@ -108,8 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Base User model
-AUTH_USER_MODEL = "user.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
