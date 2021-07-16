@@ -3,3 +3,4 @@ django-cors-headers
 tweepy==3.10.0
 nltk==3.6.1
 redis==3.5.3
+psycopg2-binary==2.8.6
