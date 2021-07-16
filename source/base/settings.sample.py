@@ -30,14 +30,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Third Parties
     "rest_framework",
     "corsheaders",
     "drf_yasg",
-
     # Locals
-    'apps.sample-app'
+    "apps.twitter",
+    "apps.user",
 ]
 
 MIDDLEWARE = [
@@ -80,9 +79,11 @@ WSGI_APPLICATION = "base.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        'NAME': get_docker_secret('twitter-analyser-postgres-db', 'twitter-analyser'),
-        'USER': get_docker_secret('twitter-analyser-postgres-user', 'twitter-analyser_user'),
-        'PASSWORD': get_docker_secret('twitter-analyser-postgres-passwd', '1234'),
+        "NAME": get_docker_secret("twitter-analyser-postgres-db", "twitter-analyser"),
+        "USER": get_docker_secret(
+            "twitter-analyser-postgres-user", "twitter-analyser_user"
+        ),
+        "PASSWORD": get_docker_secret("twitter-analyser-postgres-passwd", "1234"),
         "HOST": get_env("POSTGRES_HOST", raise_exception=True),
         "PORT": get_env("POSTGRES_PORT", raise_exception=True),
     }
@@ -173,20 +174,13 @@ LOGGING = {
         "handlers": ["console"],
         "level": "WARNING",
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": get_env("DJANGO_LOG_LEVEL", raise_exception=True),
-            "propagate": False,
-        },
-    },
 }
 
 
 # TWITTER
 TWITTER_API_KEY = get_env("TWITTER_API_KEY", raise_exception=True)
-TWITTER_API_SECRET_KEY = get_env(
-    "TWITTER_API_SECRET_KEY", raise_exception=True)
+TWITTER_API_SECRET_KEY = get_env("TWITTER_API_SECRET_KEY", raise_exception=True)
 TWITTER_ACCESS_TOKEN = get_env("TWITTER_ACCESS_TOKEN", raise_exception=True)
 TWITTER_ACCESS_TOKEN_SECRET = get_env(
-    "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True)
+    "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True
+)
