@@ -34,25 +34,21 @@ class TwitterAdapter(object):
         all_tweets = self.get_tweets(search_terms, lang, since, items)
         if len(all_tweets) == 0:
             return []
-        print("get tweets time: ", time.time() - ttt0)
 
         tt0 = time.time()
         tweets_without_urls = self.remove_url(all_tweets)
-        print("remove url time: ", time.time() - tt0)
 
         tg0 = time.time()
         list_of_tweet_words = [
             self.convert_to_list(tweet) for tweet in tweets_without_urls
         ]
         list_of_all_words = helper.get_list_of_all_words(list_of_tweet_words)
-        print("get as list time: ", time.time() - tg0)
 
         # TODO: use ID
         tag_for_redis = search_terms.split()[0]
         # save in redis
         t0 = time.time()
         self.save_on_redis(list_of_all_words, tag_for_redis)
-        print("save on redis time: ", time.time() - t0)
         # get top 10 and remove stop words if exists
         return self.get_most_common(tag_for_redis, collection, most_common)
 
