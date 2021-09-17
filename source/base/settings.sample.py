@@ -182,3 +182,10 @@ TWITTER_ACCESS_TOKEN = get_env("TWITTER_ACCESS_TOKEN", raise_exception=True)
 TWITTER_ACCESS_TOKEN_SECRET = get_env(
     "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True
 )
+
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "elasticsearch:9200"},
+}
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
