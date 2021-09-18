@@ -4,7 +4,6 @@ import time
 
 import nltk
 import tweepy
-from base.interfaces.redis import Client as RedisClient
 from commons.helpers.utils import Helper
 from django.conf import settings
 from .documents import TweetsDocument
