@@ -21,7 +21,6 @@ coverage.xml
 .gitattributes
 README.rst
 README.md
-.env/
 .vscode/
 db.sqlite3
 nginx/

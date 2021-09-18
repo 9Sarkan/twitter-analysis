@@ -30,10 +30,10 @@ nginxConf:
 	cp deployment/nginx/nginx.conf.sample deployment/nginx/nginx.conf
 
 superUser:
-	docker exec -it twitter-analyser-stack_twitter-analyser ./manage.py createsuperuser
+	docker exec -it $(docker ps -q -f name=twitter-analyser-stack_twitter-analyser) python3 source/manage.py createsuperuser
 
 intoPsql:
-	docker exec -it twitter-analyser-stack_twitter-analyser ./manage.py dbshell
+	docker exec -it $(docker ps -q -f name=twitter-analyser-stack_twitter-analyser) ./source/manage.py dbshell
 
 restarttwitter-analyser:
 	docker service update --force twitter-analyser-stack_twitter-analyser

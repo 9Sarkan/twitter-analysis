@@ -1,0 +1,10 @@
+twitter:
+  twitter-api-key: wTNsqmaVug7YZOJE1x5lmb9Uz
+  twitter-api-secret-key: MGrwtFfKzUHfH2I9duMdeSRqWPvQrQ4EdzT0aqOuBy96AMvW8r
+  twitter-token: AAAAAAAAAAAAAAAAAAAAAEpnOgEAAAAAbiJKTYDIMdSz39P0Feiy%2BfO7J1s%3DXx5OUIJJNiKESzOOh94q06HtHXbbCKXAMfh3GmGR4URQ2IuoBi
+  twitter-access-token: 846005778951626753-qKa7zqJVQJ1M5at2vElMKO6L6qVcBsa
+  twitter-access-token-secret: eK2U6XjFU1qO0CXFisZ62nRBIf9u6t5AmV4DgW0rPAvkb
+redis:
+  host: localhost
+  port: 6379
+  db: 1

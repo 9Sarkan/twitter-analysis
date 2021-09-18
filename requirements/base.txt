@@ -6,3 +6,9 @@ tweepy==3.10.0
 nltk==3.6.1
 redis==3.5.3
 psycopg2-binary==2.8.6
+django-elasticsearch-dsl==7.2.0
+django-elasticsearch-dsl-drf==0.22.2
+djangorestframework==3.12.4
+elasticsearch==7.14.1
+elasticsearch-dsl==7.4.0
+drf-yasg==1.20.0

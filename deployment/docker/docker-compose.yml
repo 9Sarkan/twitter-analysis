@@ -21,24 +21,21 @@ services:
         delay: 10s
         max_attempts: 5
 
-  web-server:
-    image: "nginx:alpine"
+  nginx:
+    image: "nginx"
     ports:
-      - 80:80
+      - 8000:80
       - 443:443
     networks:
       - twitter-analyser
     volumes:
       - "../nginx/nginx.conf:/etc/nginx/nginx.conf"
-      - "../nginx/ssl:/etc/nginx/custome-ssl"
       - "twitter-analyser_static:/static"
       - "twitter-analyser_media:/media"
-    depends_on:
-      - twitter-analyser
-      - kibana
     deploy:
       restart_policy:
         condition: on-failure
+        delay: 10s
         max_attempts: 5
 
   twitter-analyser:
@@ -57,6 +54,9 @@ services:
       - twitter-analyser
     depends_on:
       - db
+      - redis
+      - celery
+      - elasticsearch
     deploy:
       mode: replicated
       replicas: 1
@@ -72,6 +72,7 @@ services:
 
   celery:
     image: "twitter-analyser:latest"
+    env_file: ../../source/.env
     command: celery -A base worker -l info
     networks: 
       - twitter-analyser
@@ -80,6 +81,7 @@ services:
 
   celery-beat:
     image: "twitter-analyser:latest"
+    env_file: ../../source/.env
     command: celery -A base beat -l info
     networks: 
       - twitter-analyser
@@ -93,6 +95,8 @@ services:
 
   kibana:
     image: docker.io/bitnami/kibana:7
+    ports:
+      "5601:5601"
     volumes:
       - "kibana_data:/bitnami/kibana"
     depends_on:
