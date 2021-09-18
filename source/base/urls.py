@@ -15,6 +15,7 @@ urlpatterns = i18n_patterns(
 
 urlpatterns += [
     path("v1/twitter/", include("apps.twitter.urls")),
+    path("v1/users/", include("apps.user.api.v1.urls")),
 ]
 
 # This is only needed when using runserver.
