@@ -39,11 +39,11 @@ if settings.DEBUG:
     urlpatterns += [
         path("api-auth", include("rest_framework.urls", namespace="rest_framework")),
         path(
-            "swagger",
+            "swagger/",
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
         path(
-            "redoc", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
         ),
     ]
