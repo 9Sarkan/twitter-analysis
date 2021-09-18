@@ -1,5 +1,8 @@
 import os
+from datetime import timedelta
+
 from commons.utils import get_env
+
 from .get_docker_secret import get_docker_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -189,3 +192,15 @@ ELASTICSEARCH_DSL = {
 
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+REDIS = {
+    "host": os.environ.get("REDIS_HOST", "127.0.0.1"),
+    "port": os.environ.get("REDIS_PORT", 6379),
+    "db": os.environ.get("REDIS_DATABASE", 0),
+    "password": os.environ.get("REDIS_PASSWORD", ""),
+    "prefix": "session",
+    "socket_timeout": 1,
+    "retry_on_timeout": False,
+}
+
+REDIS_TOKEN_EXPIRE_TIME = int(timedelta(minutes=15).total_seconds())
