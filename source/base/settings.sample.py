@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "drf_yasg",
+    "django_elasticsearch_dsl",
+    "django_elasticsearch_dsl_drf",
     # Locals
     "apps.twitter",
     "apps.user",
@@ -204,3 +206,5 @@ REDIS = {
 }
 
 REDIS_TOKEN_EXPIRE_TIME = int(timedelta(minutes=15).total_seconds())
+
+TAGS_UPDATE_PERIOD = os.environ.get("TAGS_UPDATE_PERIOD", 1) * 60 * 60
