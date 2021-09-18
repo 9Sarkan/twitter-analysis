@@ -35,6 +35,7 @@ services:
       - "twitter-analyser_media:/media"
     depends_on:
       - twitter-analyser
+      - kibana
     deploy:
       restart_policy:
         condition: on-failure
@@ -66,6 +67,37 @@ services:
         condition: on-failure
         max_attempts: 5
 
+  redis:
+    image: redis:alpine
+
+  celery:
+    image: "twitter-analyser:latest"
+    command: celery -A base worker -l info
+    networks: 
+      - twitter-analyser
+    depends_on:
+      - redis
+
+  celery-beat:
+    image: "twitter-analyser:latest"
+    command: celery -A base beat -l info
+    networks: 
+      - twitter-analyser
+    depends_on:
+      - redis
+
+  elasticsearch:
+    image: docker.io/bitnami/elasticsearch:7
+    volumes:
+      - "elasticsearch_data:/bitnami/elasticsearch"
+
+  kibana:
+    image: docker.io/bitnami/kibana:7
+    volumes:
+      - "kibana_data:/bitnami/kibana"
+    depends_on:
+      - elasticsearch
+
 networks:
   twitter-analyser:
     # driver: overlay
@@ -77,6 +109,10 @@ volumes:
     external: true
   twitter-analyser_static:
     external: true
+  elasticsearch_data:
+    driver: local
+  kibana_data:
+    driver: local
 
 secrets:
   twitter-analyser-postgres-passwd:

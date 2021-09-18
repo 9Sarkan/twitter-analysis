@@ -1,4 +1,2 @@
 -r base.txt
 gunicorn==20.0.4
-psycopg2-binary==2.8.6
-

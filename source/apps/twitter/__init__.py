@@ -1,3 +1,1 @@
-from .adapter import TwitterAdapter
-
-default_app_config = 'apps.twitter.apps.TwitterAppConfig'
+default_app_config = "apps.twitter.apps.TwitterAppConfig"

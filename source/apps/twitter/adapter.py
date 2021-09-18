@@ -1,4 +1,5 @@
 import os
+import json
 import time
 
 import nltk
@@ -6,9 +7,21 @@ import tweepy
 from base.interfaces.redis import Client as RedisClient
 from commons.helpers.utils import Helper
 from django.conf import settings
+from .documents import TweetsDocument
+import requests
 
 
 class TwitterAdapter(object):
+
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(TwitterAdapter, cls).__new__(
+                TwitterAdapter, *args, **kwargs
+            )
+        return cls._instance
+
     def __init__(self):
         self._api_key = settings.TWITTER_API_KEY
         self._api_key_secret = settings.TWITTER_API_SECRET_KEY
@@ -20,63 +33,126 @@ class TwitterAdapter(object):
     def search(self, search_terms, lang, since, items, collection, most_common):
         helper = Helper()
 
-        ttt0 = time.time()
         all_tweets = self.get_tweets(search_terms, lang, since, items)
         if len(all_tweets) == 0:
             return []
-        print("get tweets time: ", time.time() - ttt0)
 
-        tt0 = time.time()
-        tweets_without_urls = self.remove_url(all_tweets)
-        print("remove url time: ", time.time() - tt0)
-
-        tg0 = time.time()
-        list_of_tweet_words = [
-            self.convert_to_list(tweet) for tweet in tweets_without_urls
-        ]
-        list_of_all_words = helper.get_list_of_all_words(list_of_tweet_words)
-        print("get as list time: ", time.time() - tg0)
-
-        # TODO: use ID
-        tag_for_redis = search_terms.split()[0]
-        # save in redis
-        t0 = time.time()
-        self.save_on_redis(list_of_all_words, tag_for_redis)
-        print("save on redis time: ", time.time() - t0)
-        # get top 10 and remove stop words if exists
-        return self.get_most_common(tag_for_redis, collection, most_common)
+        return self.get_most_common(search_terms, collection, most_common)
 
     def get_most_common(self, tag, collection, most_common):
         stop_words = Helper().get_stop_words("english")
-        while True:
-            top_ten = RedisClient().get_most_common(tag, most_common)
-            for word in top_ten:
-                if (
-                    word.decode("utf-8") in stop_words
-                    or word.decode("utf-8") in collection
-                ):
-                    RedisClient().remove_from_list(tag, word)
-                    top_ten.remove(word)
-            if len(top_ten) == most_common:
-                break
-        return top_ten
+
+        query_map = {
+            "query": {
+                "match": {
+                    "search_item": tag,
+                }
+            },
+            "aggs": {
+                "mostUsed": {
+                    "terms": {
+                        "field": "text.keyword",
+                        "exclude": ["rt", *stop_words, *collection],
+                        "size": most_common,
+                    }
+                }
+            },
+        }
+
+        marshaled_data = json.dumps(query_map)
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        response = requests.post(
+            f'http://{settings.ELASTICSEARCH_DSL["default"]["hosts"]}/tweets/_search',
+            headers=headers,
+            data=marshaled_data,
+        )
+
+        return response.json()["aggregations"]["mostUsed"]["buckets"]
 
     def get_tweets(self, search_terms, lang, since, items):
         tweets = tweepy.Cursor(
-            self.api.search, q=search_terms, lang=lang, since=since
+            self.api.search,
+            q=search_terms,
+            lang=lang,
+            since=since,
+            tweet_mode="extended",
         ).items(items)
-        return [tweet.text for tweet in tweets]
-
-    def remove_url(self, tweets):
-        return [Helper().remove_url(tweet) for tweet in tweets]
+        for t in tweets:
+            TweetsDocument(
+                id=t.id,
+                lang=t.lang,
+                author=t.author.__dict__["_json"],
+                entities=t.entities,
+                search_item=search_terms,
+                source=t.source,
+                text=self.convert_to_list(t.full_text),
+                raw_text=t.full_text,
+                retweet_count=t.retweet_count,
+            ).save()
 
     def convert_to_list(self, tweet):
         """
         Split the words from one tweet into unique elements
         """
-        return tweet.lower().split()
+        return tweet.lower().split(" ")
 
-    def save_on_redis(self, tweets, search_terms):
-        client = RedisClient()
-        for word in tweets:
-            client.add_to_list(search_terms, word)
+    def get_from_populars(self, tag, limit):
+        """
+        get tweets from most populars
+        """
+        query_map = {
+            "query": {"match": {"search_item": tag}},
+            "_source": [
+                "author.name",
+                "author.followers_count",
+                "author.profile_background_image_url",
+                "author.description",
+                "raw_text",
+                "entities.hashtags.text",
+            ],
+            "sort": [{"author.followers_count": {"order": "desc"}}],
+            "size": limit,
+        }
+        marshaled_data = json.dumps(query_map)
+        headers = {
+            "Content-Type": "application/json",
+        }
+        response = requests.post(
+            f'http://{settings.ELASTICSEARCH_DSL["default"]["hosts"]}/tweets/_search?filter_path=hits.hits._source',
+            headers=headers,
+            data=marshaled_data,
+        )
+        return response.json()["hits"]["hits"]
+
+    def get_most_retweet(self, tag, limit):
+        """
+        get tweets sorted by most retweeted
+        """
+
+        query_map = {
+            "query": {"match": {"search_item": tag}},
+            "_source": [
+                "author.name",
+                "author.followers_count",
+                "author.profile_background_image_url",
+                "author.description",
+                "raw_text",
+                "entities.hashtags.text",
+            ],
+            "sort": [{"retweet_count": {"order": "desc"}}],
+            "size": limit,
+        }
+        marshaled_data = json.dumps(query_map)
+        headers = {
+            "Content-Type": "application/json",
+        }
+        response = requests.post(
+            f'http://{settings.ELASTICSEARCH_DSL["default"]["hosts"]}/tweets/_search?filter_path=hits.hits._source',
+            headers=headers,
+            data=marshaled_data,
+        )
+        return response.json()["hits"]["hits"]

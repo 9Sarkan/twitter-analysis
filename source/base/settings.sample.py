@@ -1,5 +1,8 @@
 import os
+from datetime import timedelta
+
 from commons.utils import get_env
+
 from .get_docker_secret import get_docker_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -30,14 +33,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Third Parties
     "rest_framework",
     "corsheaders",
     "drf_yasg",
-
     # Locals
-    'apps.sample-app'
+    "apps.twitter",
+    "apps.user",
 ]
 
 MIDDLEWARE = [
@@ -80,9 +82,11 @@ WSGI_APPLICATION = "base.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        'NAME': get_docker_secret('twitter-analyser-postgres-db', 'twitter-analyser'),
-        'USER': get_docker_secret('twitter-analyser-postgres-user', 'twitter-analyser_user'),
-        'PASSWORD': get_docker_secret('twitter-analyser-postgres-passwd', '1234'),
+        "NAME": get_docker_secret("twitter-analyser-postgres-db", "twitter-analyser"),
+        "USER": get_docker_secret(
+            "twitter-analyser-postgres-user", "twitter-analyser_user"
+        ),
+        "PASSWORD": get_docker_secret("twitter-analyser-postgres-passwd", "1234"),
         "HOST": get_env("POSTGRES_HOST", raise_exception=True),
         "PORT": get_env("POSTGRES_PORT", raise_exception=True),
     }
@@ -106,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation" ".NumericPasswordValidator",
     },
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -170,20 +175,32 @@ LOGGING = {
         "handlers": ["console"],
         "level": "WARNING",
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": get_env("DJANGO_LOG_LEVEL", raise_exception=True),
-            "propagate": False,
-        },
-    },
 }
 
 
 # TWITTER
 TWITTER_API_KEY = get_env("TWITTER_API_KEY", raise_exception=True)
-TWITTER_API_SECRET_KEY = get_env(
-    "TWITTER_API_SECRET_KEY", raise_exception=True)
+TWITTER_API_SECRET_KEY = get_env("TWITTER_API_SECRET_KEY", raise_exception=True)
 TWITTER_ACCESS_TOKEN = get_env("TWITTER_ACCESS_TOKEN", raise_exception=True)
 TWITTER_ACCESS_TOKEN_SECRET = get_env(
-    "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True)
+    "TWITTER_ACCESS_TOKEN_SECRET", raise_exception=True
+)
+
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "elasticsearch:9200"},
+}
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+REDIS = {
+    "host": os.environ.get("REDIS_HOST", "127.0.0.1"),
+    "port": os.environ.get("REDIS_PORT", 6379),
+    "db": os.environ.get("REDIS_DATABASE", 0),
+    "password": os.environ.get("REDIS_PASSWORD", ""),
+    "prefix": "session",
+    "socket_timeout": 1,
+    "retry_on_timeout": False,
+}
+
+REDIS_TOKEN_EXPIRE_TIME = int(timedelta(minutes=15).total_seconds())

@@ -3,5 +3,5 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class TwitterAppConfig(AppConfig):
-    name = 'apps.TwitterApp'
-    verbose_name = _('TwitterApp')
+    name = "apps.twitter"
+    verbose_name = _("TwitterApp")

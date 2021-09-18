@@ -1,5 +1,5 @@
 import redis
-from helpers.utils import get_env
+from commons.helpers.utils import get_env
 
 
 class Client(object):

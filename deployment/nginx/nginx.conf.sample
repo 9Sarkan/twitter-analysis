@@ -52,6 +52,12 @@ http{
             proxy_pass http://twitter-analyser:8000/;
         }
 
+        location /data-dashboard/ {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_pass http://kibana:5601/;
+        }
+
         location /static/ {
             alias /static/;
         }
